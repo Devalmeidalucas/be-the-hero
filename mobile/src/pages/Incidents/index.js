@@ -1,78 +1,97 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Feather } from '@expo/vector-icons';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { View, Text, Image, TouchableOpacity, Linking } from 'react-native';
-import * as MailComposer from 'expo-mail-composer';
+import { useNavigation } from '@react-navigation/native';
+import { View, FlatList, Image, Text, TouchableOpacity } from 'react-native';
+
+import api from '../../services/api';
 
 import logoImg from '../../assets/logo.png';
 
 import styles from './styles';
 
-export default function Detail() {
+export default function Incidents() {
+  const [incidents, setIncidents] = useState([]);
+  const [total, setTotal] = useState(0);
+
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+
   const navigation = useNavigation();
-  const route = useRoute();
 
-  const incident = route.params.incident;
-  const message = `Olá ${incident.name}, estou entrando em contato pois gostaria de ajudar no caso "${incident.title}" com o valor de ${Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(incident.value)}`;
-
-  function navigateBack() {
-    navigation.goBack()
+  function navigateToDetail(incident) {
+    navigation.navigate('Detail', { incident });
   }
 
-  function sendMail() {
-    MailComposer.composeAsync({
-      subject: `Herói do caso: ${incident.title}`,
-      recipients: [incident.email],
-      body: message,
-    })
+  async function loadIncidents() {
+    if (loading) {
+      return;
+    }
+
+    if (total > 0 && incidents.length === total) {
+      return;
+    }
+
+    setLoading(true);
+
+    const response = await api.get('incidents', {
+      params: { page }
+    });
+
+    setIncidents([...incidents, ...response.data]);
+    setTotal(response.headers['x-total-count']);
+    setPage(page + 1);
+    setLoading(false);
   }
 
-  function sendWhatsapp() {
-    Linking.openURL(`whatsapp://send?phone=${incident.whatsapp}&text=${message}`);
-  }
-
+  useEffect(() => {
+    loadIncidents();
+  }, []);
+ 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Image source={logoImg} />
-
-        <TouchableOpacity onPress={navigateBack}>
-          <Feather name="arrow-left" size={28} color="#E82041" />
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.incident}>
-        <Text style={[styles.incidentProperty, { marginTop: 0 }]}>ONG:</Text>
-        <Text style={styles.incidentValue}>{incident.name} de {incident.city}/{incident.uf}</Text>
-
-        <Text style={styles.incidentProperty}>CASO:</Text>
-        <Text style={styles.incidentValue}>{incident.title}</Text>
-
-        <Text style={styles.incidentProperty}>VALOR:</Text>
-        <Text style={styles.incidentValue}>
-          {Intl.NumberFormat('pt-BR', { 
-            style: 'currency', 
-            currency: 'BRL' 
-          }).format(incident.value)}
+        <Text style={styles.headerText}>
+          Total de <Text style={styles.headerTextBold}>{total} casos</Text>.
         </Text>
       </View>
 
-      <View style={styles.contactBox}>
-        <Text style={styles.heroTitle}>Salve o dia!</Text>
-        <Text style={styles.heroTitle}>Seja o herói desse caso.</Text>
+      <Text style={styles.title}>Bem-vindo!</Text>
+      <Text style={styles.description}>Escolha um dos casos abaixo e salve o dia.</Text>
 
-        <Text style={styles.heroDescription}>Entre em contato:</Text>
+      <FlatList
+        data={incidents}
+        style={styles.incidentList}
+        keyExtractor={incident => String(incident.id)}
+        // showsVerticalScrollIndicator={false}
+        onEndReached={loadIncidents}
+        onEndReachedThreshold={0.2}
+        renderItem={({ item: incident }) => (
+          <View style={styles.incident}>
+            <Text style={styles.incidentProperty}>ONG:</Text>
+            <Text style={styles.incidentValue}>{incident.name}</Text>
 
-        <View style={styles.actions}>
-          <TouchableOpacity style={styles.action} onPress={sendWhatsapp}>
-            <Text style={styles.actionText}>WhatsApp</Text>
-          </TouchableOpacity>
+            <Text style={styles.incidentProperty}>CASO:</Text>
+            <Text style={styles.incidentValue}>{incident.title}</Text>
 
-          <TouchableOpacity style={styles.action} onPress={sendMail}>
-            <Text style={styles.actionText}>E-mail</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+            <Text style={styles.incidentProperty}>VALOR:</Text>
+            <Text style={styles.incidentValue}>
+              {Intl.NumberFormat('pt-BR', { 
+                style: 'currency', 
+                currency: 'BRL' 
+              }).format(incident.value)}
+            </Text>
+
+            <TouchableOpacity 
+              style={styles.detailsButton} 
+              onPress={() => navigateToDetail(incident)}
+            >
+              <Text style={styles.detailsButtonText}>Ver mais detalhes</Text>
+              <Feather name="arrow-right" size={16} color="#E02041" />            
+            </TouchableOpacity>
+          </View>
+        )}
+      />
     </View>
   );
 }
