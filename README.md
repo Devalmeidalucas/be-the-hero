@@ -34,7 +34,7 @@ Esse projeto foi desenvolvido com as seguintes tecnologias:
 
 ## Projeto
 
-O BeTheHero foi meu primeiro projeto, foi desenvolvido durante a semana OmniStack 11.0.(o meu foi desenvolvido na prorrogação, eu estava sem o meu note, devido a crise ele ainda não havia chegado, então fui fazendo anotações durante a semana pra quando o note chegasse eu conseguisse desenvolver a apicação). Foi incrivel essa semana, muito aprendizado, e muita estudos ainda para aperfeiçoar a skill na stack.
+O BeTheHero foi meu primeiro projeto, foi desenvolvido durante a semana OmniStack 11.0.(o meu foi desenvolvido na prorrogação, eu estava sem o meu note, devido a crise ele ainda não havia chegado, então fui fazendo anotações durante a semana pra quando o note chegasse eu conseguisse desenvolver a apicação). Foi incrivel essa semana, muito aprendizado, e acho que o mais importante é a noção de que preciso estudar muito ainda para aperfeiçoar minhas skills na stack.
 
 
 ## Como contribuir
