@@ -1,4 +1,8 @@
 
+<h1 align="center">
+    <img src="https://github.com/Rocketseat/semana-omnistack-11/blob/master/.github/bethehero.svg" width="200px" />
+</h1>
+
 <h4 align="center">
   🚀 Semana OmniStack 11.0
 </h4>
@@ -20,7 +24,7 @@
 <br>
 
 <p align="center">
-  <img alt="BeTheHero" src=".github/bethehero.png" width="100%">
+  <img alt="BeTheHero" src="https://github.com/Rocketseat/semana-omnistack-11/blob/master/.github/bethehero.png" width="80%">
 </p>
 
 ## :rocket: Tecnologias
